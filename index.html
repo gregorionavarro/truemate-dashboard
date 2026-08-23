@@ -953,4 +953,71 @@ setTimeout(drawChart, 100);
 if (window.matchMedia) {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawChart);
 }
+
+/* ── Live data from data.json ── */
+async function loadData() {
+  try {
+    const res = await fetch('data.json?t=' + Date.now());
+    if (!res.ok) return; // Silently fail — hardcoded data stays
+    const d = await res.json();
+
+    // Update KPIs
+    document.getElementById('kpiSent').textContent    = (d.totalSent || 0).toLocaleString();
+    document.getElementById('kpiActive').textContent  = d.activeCampaigns ?? '—';
+    document.getElementById('kpiBounces').textContent = (d.totalBounces || 0).toLocaleString();
+    document.getElementById('kpiLeads').textContent   = (d.leadsInProgress || 0).toLocaleString();
+    document.getElementById('kpiLeadsSub').textContent = 'of ' + (d.totalLeads || 0).toLocaleString() + ' en curso';
+    document.getElementById('campCount').textContent  = (d.campaigns?.length || 0) + ' campañas';
+
+    // Update workspace data for chart
+    if (d.campaigns?.length) {
+      wsData.carlos.campaigns = d.campaigns.map(c => ({
+        name: c.name,
+        shortName: c.shortName || c.name.substring(0, 12),
+        sent: c.sent || 0,
+        bounces: c.bounces || 0
+      }));
+      drawChart();
+    }
+
+    // Update last-run time
+    if (d.lastUpdated) {
+      document.getElementById('lastRun').textContent = 'Actualizado: ' + d.lastUpdated;
+    }
+
+    // Rebuild campaign table
+    if (d.campaigns?.length) {
+      const tbody = document.getElementById('campTable');
+      const maxSent = Math.max(...d.campaigns.map(c => c.leadsTotal || c.sent || 1), 1);
+      tbody.innerHTML = d.campaigns.map(c => {
+        const pct = c.leadsTotal > 0 ? Math.round(c.leadsActive / c.leadsTotal * 100) : 0;
+        const aperturaPct = c.sent > 0 && c.opens > 0 ? (c.opens / c.sent * 100).toFixed(1) + '%' : '—';
+        const leadsLabel = c.leadsTotal > 0 ? `${c.leadsActive.toLocaleString()} / ${c.leadsTotal.toLocaleString()}` : c.leadsActive.toLocaleString();
+        return `<tr>
+          <td>
+            <div class="cam-name">${c.name}</div>
+            <div class="cam-sub">${c.createdLabel || ''}</div>
+          </td>
+          <td><span class="pill running"><span class="pill-dot"></span>${c.status || 'Running'}</span></td>
+          <td>
+            <div class="leads-wrap">
+              <div class="leads-bar"><div class="leads-fill" style="width:${pct}%"></div></div>
+              <span class="leads-txt">${leadsLabel}</span>
+            </div>
+          </td>
+          <td class="r${c.sent === 0 ? ' zero' : ''}">${c.sent > 0 ? c.sent.toLocaleString() : '0'}</td>
+          <td class="r zero">${c.opens || 0}</td>
+          <td class="r zero">${aperturaPct}</td>
+          <td class="r zero">${c.clicks || 0}</td>
+          <td class="r zero">${c.replies || 0}</td>
+          <td class="r${c.bounces > 0 ? '' : ' zero'}" ${c.bounces > 0 ? 'style="color:#7C3AED;font-weight:700"' : ''}>${c.bounces || 0}</td>
+        </tr>`;
+      }).join('');
+    }
+  } catch(e) {
+    // data.json not available — hardcoded values remain
+  }
+}
+
+loadData();
 </script>
