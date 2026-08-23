@@ -1,0 +1,76 @@
+{
+  "lastUpdated": "2026-08-23",
+  "workspace": "W-Carlos-G",
+  "totalSent": 13113,
+  "totalBounces": 14,
+  "activeCampaigns": 2,
+  "leadsInProgress": 721,
+  "totalLeads": 2847,
+  "campaigns": [
+    {
+      "name": "Campaña Julio 2026-Truemate",
+      "shortName": "Jul 2026 (A)",
+      "createdLabel": "Creada Jul 2026",
+      "status": "Running",
+      "sent": 7092,
+      "opens": 0,
+      "clicks": 0,
+      "replies": 0,
+      "bounces": 11,
+      "leadsActive": 7092,
+      "leadsTotal": 7092
+    },
+    {
+      "name": "2 Campaña Julio 2026-Truemate",
+      "shortName": "Jul 2026 (B)",
+      "createdLabel": "Creada Jul 2026",
+      "status": "Running",
+      "sent": 5300,
+      "opens": 0,
+      "clicks": 0,
+      "replies": 0,
+      "bounces": 2,
+      "leadsActive": 5300,
+      "leadsTotal": 7092
+    },
+    {
+      "name": "Campaña Regular Sep 2026 (16-30 días)",
+      "shortName": "Regular Sep",
+      "createdLabel": "Creada 21 Aug · en curso",
+      "status": "Running",
+      "sent": 565,
+      "opens": 0,
+      "clicks": 0,
+      "replies": 0,
+      "bounces": 1,
+      "leadsActive": 565,
+      "leadsTotal": 1752
+    },
+    {
+      "name": "Sep – Renovación Próxima (2-3 semanas)",
+      "shortName": "Renovación",
+      "createdLabel": "Creada 22 Aug · en curso",
+      "status": "Running",
+      "sent": 156,
+      "opens": 0,
+      "clicks": 0,
+      "replies": 0,
+      "bounces": 0,
+      "leadsActive": 156,
+      "leadsTotal": 1095
+    },
+    {
+      "name": "Campaña Sep 2026-Truemate",
+      "shortName": "Sep 2026",
+      "createdLabel": "Creada 22 Aug · iniciando",
+      "status": "Running",
+      "sent": 0,
+      "opens": 0,
+      "clicks": 0,
+      "replies": 0,
+      "bounces": 0,
+      "leadsActive": 0,
+      "leadsTotal": 0
+    }
+  ]
+}
