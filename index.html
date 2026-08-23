@@ -1,0 +1,673 @@
+<title>Truemate Campaigns</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap">
+
+<style>
+/* ── Token system ── */
+:root {
+  --bg:         #F0F4FF;
+  --surface:    #FFFFFF;
+  --surface-2:  #F5F7FF;
+  --border:     #E2E8FF;
+  --text:       #0D1137;
+  --text-2:     #5A6296;
+  --text-3:     #9AA0C0;
+  --accent:     #4C6EF5;
+  --accent-dim: #EEF1FF;
+  --sent:       #4C6EF5;
+  --open-c:     #059669;
+  --bounce-c:   #7C3AED;
+  --run-c:      #059669;
+  --run-bg:     #D1FAE5;
+  --shadow:     0 1px 3px rgba(76,110,245,.08), 0 4px 16px rgba(76,110,245,.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:         #080C18;
+    --surface:    #0F1629;
+    --surface-2:  #141D35;
+    --border:     #1E2A45;
+    --text:       #EDF0FF;
+    --text-2:     #8B92B8;
+    --text-3:     #4A5070;
+    --accent:     #6B8FFF;
+    --accent-dim: #13193A;
+    --run-bg:     #0A2818;
+    --shadow:     0 1px 3px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:         #080C18;
+  --surface:    #0F1629;
+  --surface-2:  #141D35;
+  --border:     #1E2A45;
+  --text:       #EDF0FF;
+  --text-2:     #8B92B8;
+  --text-3:     #4A5070;
+  --accent:     #6B8FFF;
+  --accent-dim: #13193A;
+  --run-bg:     #0A2818;
+  --shadow:     0 1px 3px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-left { display: flex; align-items: center; gap: 10px; }
+
+.logo-mark {
+  width: 30px; height: 30px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800; font-size: 14px;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700; font-size: 15px;
+  letter-spacing: -.01em;
+}
+
+.sep { color: var(--border); font-size: 18px; font-weight: 300; }
+
+.workspace-tag {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  letter-spacing: .02em;
+}
+
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.last-run {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.btn-toggle {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-toggle:hover { background: var(--accent-dim); color: var(--accent); }
+
+/* ── Main ── */
+.main {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Page headline ── */
+.page-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.page-head h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700; font-size: 20px;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.page-head .sub {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* ── KPI row ── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px 16px;
+  box-shadow: var(--shadow);
+}
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.kpi-val {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 5px;
+}
+.kpi-val.blue   { color: var(--sent); }
+.kpi-val.green  { color: var(--open-c); }
+.kpi-val.purple { color: var(--bounce-c); }
+.kpi-val.neutral { color: var(--text); }
+
+.kpi-sub {
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.3;
+}
+
+/* ── Chart card ── */
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+
+.chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chart-head-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600; font-size: 14px;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.leg-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+
+.chart-wrap { overflow-x: auto; }
+
+/* ── SVG chart styling ── */
+.chart-text {
+  font-family: 'Inter', sans-serif;
+  fill: var(--text-3);
+}
+
+/* ── Campaign table ── */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.table-head-row {
+  padding: 15px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-head-row h2 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600; font-size: 14px;
+}
+
+.count-badge {
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.tbl-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  padding: 10px 24px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+thead th.r { text-align: right; }
+
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface-2); }
+
+td {
+  padding: 13px 24px;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+td.r {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+td.r.zero { color: var(--text-3); font-weight: 400; }
+
+.cam-name {
+  font-weight: 600;
+  font-size: 13px;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cam-sub {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 1px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.pill.running {
+  background: var(--run-bg);
+  color: var(--run-c);
+}
+
+.pill-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+
+.leads-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leads-bar {
+  width: 64px;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.leads-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.leads-txt {
+  font-size: 11px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Footer note ── */
+.footer-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-3);
+  padding-top: 4px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .page-head h1 { font-size: 17px; }
+  .header { padding: 0 16px; }
+  .main { padding: 16px 12px 32px; }
+}
+</style>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">TM</div>
+    <span class="header-title">Truemate</span>
+    <span class="sep">|</span>
+    <span class="workspace-tag">W-Carlos-G</span>
+  </div>
+  <div class="header-right">
+    <span class="last-run" id="lastRun"></span>
+    <button class="btn-toggle" onclick="toggleTheme()">☀ / ☾</button>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- Page headline -->
+  <div class="page-head">
+    <h1>Campaign Analytics</h1>
+    <span class="sub" id="todayDate"></span>
+  </div>
+
+  <!-- KPI tiles -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Total Enviados</div>
+      <div class="kpi-val blue">13,113</div>
+      <div class="kpi-sub">Across all campaigns</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Campañas Activas</div>
+      <div class="kpi-val green">2</div>
+      <div class="kpi-sub">Running · 3 total</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Bounces</div>
+      <div class="kpi-val purple">14</div>
+      <div class="kpi-sub">0.11% bounce rate</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Leads Progreso</div>
+      <div class="kpi-val neutral">721</div>
+      <div class="kpi-sub">of 2,847 en curso</div>
+    </div>
+  </div>
+
+  <!-- Horizontal bar chart -->
+  <div class="chart-card">
+    <div class="chart-head">
+      <div class="chart-head-title">Enviados por Campaña</div>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#4C6EF5"></div>Enviados</div>
+        <div class="leg"><div class="leg-dot" style="background:#7C3AED"></div>Bounces</div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <svg id="barChart" viewBox="0 0 900 240" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;"></svg>
+    </div>
+  </div>
+
+  <!-- Campaign table -->
+  <div class="table-card">
+    <div class="table-head-row">
+      <h2>Campañas</h2>
+      <span class="count-badge">5 campañas</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Leads</th>
+            <th class="r">Enviados</th>
+            <th class="r">Aperturas</th>
+            <th class="r">% Apertura</th>
+            <th class="r">Clics</th>
+            <th class="r">Respuestas</th>
+            <th class="r">Bounces</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="cam-name">Campaña Julio 2026-Truemate</div>
+              <div class="cam-sub">Creada Jul 2026</div>
+            </td>
+            <td><span class="pill running"><span class="pill-dot"></span>Running</span></td>
+            <td>
+              <div class="leads-wrap">
+                <div class="leads-bar"><div class="leads-fill" style="width:100%"></div></div>
+                <span class="leads-txt">7,092</span>
+              </div>
+            </td>
+            <td class="r">7,092</td>
+            <td class="r zero">0</td>
+            <td class="r zero">—</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+            <td class="r" style="color:#7C3AED;font-weight:700">11</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cam-name">2 Campaña Julio 2026-Truemate</div>
+              <div class="cam-sub">Creada Jul 2026</div>
+            </td>
+            <td><span class="pill running"><span class="pill-dot"></span>Running</span></td>
+            <td>
+              <div class="leads-wrap">
+                <div class="leads-bar"><div class="leads-fill" style="width:75%"></div></div>
+                <span class="leads-txt">5,300</span>
+              </div>
+            </td>
+            <td class="r">5,300</td>
+            <td class="r zero">0</td>
+            <td class="r zero">—</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+            <td class="r" style="color:#7C3AED;font-weight:700">2</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cam-name">Campaña Regular Sep 2026 (16-30 días)</div>
+              <div class="cam-sub">Creada 21 Aug · en curso</div>
+            </td>
+            <td><span class="pill running"><span class="pill-dot"></span>Running</span></td>
+            <td>
+              <div class="leads-wrap">
+                <div class="leads-bar"><div class="leads-fill" style="width:32%"></div></div>
+                <span class="leads-txt">565 / 1,752</span>
+              </div>
+            </td>
+            <td class="r">565</td>
+            <td class="r zero">0</td>
+            <td class="r zero">—</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+            <td class="r" style="color:#7C3AED;font-weight:700">1</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cam-name">Sep – Renovación Próxima (2-3 semanas)</div>
+              <div class="cam-sub">Creada 22 Aug · en curso</div>
+            </td>
+            <td><span class="pill running"><span class="pill-dot"></span>Running</span></td>
+            <td>
+              <div class="leads-wrap">
+                <div class="leads-bar"><div class="leads-fill" style="width:14%"></div></div>
+                <span class="leads-txt">156 / 1,095</span>
+              </div>
+            </td>
+            <td class="r">156</td>
+            <td class="r zero">0</td>
+            <td class="r zero">—</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cam-name">Campaña Sep 2026-Truemate</div>
+              <div class="cam-sub">Creada 22 Aug · iniciando</div>
+            </td>
+            <td><span class="pill running"><span class="pill-dot"></span>Running</span></td>
+            <td>
+              <div class="leads-wrap">
+                <div class="leads-bar"><div class="leads-fill" style="width:0%"></div></div>
+                <span class="leads-txt">0 / —</span>
+              </div>
+            </td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+            <td class="r zero">—</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+            <td class="r zero">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="footer-note">Aperturas y clics aparecerán cuando los destinatarios interactúen con los emails · Campañas lanzadas 21-22 ago</p>
+
+</main>
+
+<script>
+/* ── Theme toggle ── */
+function toggleTheme() {
+  const root = document.documentElement;
+  const cur = root.getAttribute('data-theme');
+  root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+}
+
+/* ── Date display ── */
+const now = new Date();
+document.getElementById('todayDate').textContent =
+  now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+document.getElementById('lastRun').textContent =
+  'Actualizado: ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+/* ── Horizontal bar chart ── */
+function drawChart() {
+  const svg = document.getElementById('barChart');
+  const W = 900, H = 240;
+  const padL = 10, padR = 140, padT = 14, padB = 20;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  const campaigns = [
+    { name: 'Campaña Julio 2026',       sent: 7092, bounces: 11, shortName: 'Jul 2026 (A)' },
+    { name: '2 Campaña Julio 2026',     sent: 5300, bounces: 2,  shortName: 'Jul 2026 (B)' },
+    { name: 'Regular Sep (16-30 días)', sent: 565,  bounces: 1,  shortName: 'Regular Sep'  },
+    { name: 'Renovación 2-3 semanas',   sent: 156,  bounces: 0,  shortName: 'Renovación'   },
+    { name: 'Sep 2026-Truemate',        sent: 0,    bounces: 0,  shortName: 'Sep 2026'     },
+  ];
+
+  const maxVal = 7092;
+  const barH = Math.floor(chartH / campaigns.length);
+  const barPad = Math.round(barH * .22);
+  const effectiveBarH = barH - barPad * 2;
+
+  const cs = getComputedStyle(document.documentElement);
+  const colText3  = cs.getPropertyValue('--text-3').trim()  || '#9AA0C0';
+  const colBorder = cs.getPropertyValue('--border').trim()  || '#E2E8FF';
+  const colAccent = cs.getPropertyValue('--accent').trim()  || '#4C6EF5';
+  const colBounce = '#7C3AED';
+  const colText2  = cs.getPropertyValue('--text-2').trim()  || '#5A6296';
+
+  let html = '';
+
+  const gridSteps = [0, 0.25, 0.5, 0.75, 1];
+  gridSteps.forEach(t => {
+    const x = padL + chartW * t;
+    const label = t === 0 ? '0' : Math.round(maxVal * t).toLocaleString();
+    html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + chartH}" stroke="${colBorder}" stroke-width="1" stroke-dasharray="${t === 0 ? 'none' : '3,3'}"/>";
+    html += `<text x="${x}" y="${padT + chartH + 14}" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="${colText3}">${label}</text>`;
+  });
+
+  campaigns.forEach((c, i) => {
+    const y = padT + i * barH + barPad;
+    const sentW = Math.max(c.sent / maxVal * chartW, 0);
+    const bounceW = Math.max(c.bounces / maxVal * chartW, 0);
+    const rx = Math.min(4, effectiveBarH / 2);
+    if (sentW > 0) {
+      html += `<rect x="${padL}" y="${y}" width="${sentW}" height="${effectiveBarH}" rx="${rx}" fill="${colAccent}" opacity=".85"/>";
+    } else {
+      html += `<rect x="${padL}" y="${y}" width="2" height="${effectiveBarH}" rx="1" fill="${colBorder}"/>";
+    }
+    if (bounceW > 0) {
+      html += `<rect x="${padL}" y="${y + effectiveBarH * .3}" width="${Math.max(bounceW, 3)}" height="${effectiveBarH * .4}" rx="2" fill="${colBounce}" opacity=".9"/>";
+    }
+    if (c.sent > 0) {
+      html += `<text x="${padL + sentW + 8}" y="${y + effectiveBarH / 2 + 4}" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="${colAccent}">${c.sent.toLocaleString()}</text>`;
+    }
+    html += `<text x="${W - padR + 10}" y="${y + effectiveBarH / 2 + 4}" font-family="Inter,sans-serif" font-size="10.5" font-weight="500" fill="${colText2}">${c.shortName}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+drawChart();
+const observer = new MutationObserver(drawChart);
+observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawChart);
+</script>
