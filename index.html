@@ -72,7 +72,7 @@ body {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
 .header-left { display: flex; align-items: center; gap: 10px; }
@@ -96,14 +96,138 @@ body {
 
 .sep { color: var(--border); font-size: 18px; font-weight: 300; }
 
+/* ── Workspace Switcher ── */
+.ws-switcher {
+  position: relative;
+}
+
 .workspace-tag {
   font-size: 11px; font-weight: 600;
   color: var(--text-2);
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 5px;
-  padding: 2px 8px;
+  padding: 3px 8px 3px 8px;
   letter-spacing: .02em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background .15s, border-color .15s;
+  user-select: none;
+}
+.workspace-tag:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.workspace-tag:hover .ws-chevron { color: var(--accent); }
+
+.ws-chevron {
+  color: var(--text-3);
+  font-size: 9px;
+  line-height: 1;
+  transition: transform .2s;
+}
+.ws-switcher.open .ws-chevron { transform: rotate(180deg); }
+
+.ws-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.08);
+  overflow: hidden;
+  z-index: 200;
+}
+.ws-switcher.open .ws-dropdown { display: block; }
+
+.ws-dropdown-header {
+  padding: 10px 14px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.ws-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: background .1s;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+.ws-item:last-child { border-bottom: none; }
+.ws-item:hover { background: var(--surface-2); }
+.ws-item.active { background: var(--accent-dim); }
+
+.ws-item-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.ws-avatar {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800; font-size: 10px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.ws-avatar.blue   { background: #4C6EF5; }
+.ws-avatar.green  { background: #059669; }
+.ws-avatar.purple { background: #7C3AED; }
+
+.ws-item-info { display: flex; flex-direction: column; gap: 1px; }
+.ws-item-name {
+  font-weight: 600;
+  font-size: 12px;
+}
+.ws-item-sub {
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.ws-item-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.ws-stat-val {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.ws-stat-label {
+  font-size: 9px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.ws-item-badge {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.ws-item-badge.active-badge {
+  background: var(--accent-dim);
+  color: var(--accent);
 }
 
 .header-right { display: flex; align-items: center; gap: 8px; }
@@ -185,9 +309,9 @@ body {
   font-variant-numeric: tabular-nums;
   margin-bottom: 5px;
 }
-.kpi-val.blue   { color: var(--sent); }
-.kpi-val.green  { color: var(--open-c); }
-.kpi-val.purple { color: var(--bounce-c); }
+.kpi-val.blue   { color: #4C6EF5; }
+.kpi-val.green  { color: #059669; }
+.kpi-val.purple { color: #7C3AED; }
 .kpi-val.neutral { color: var(--text); }
 
 .kpi-sub {
@@ -238,12 +362,6 @@ body {
 }
 
 .chart-wrap { overflow-x: auto; }
-
-/* ── SVG chart styling ── */
-.chart-text {
-  font-family: 'Inter', sans-serif;
-  fill: var(--text-3);
-}
 
 /* ── Campaign table ── */
 .table-card {
@@ -411,8 +529,65 @@ td.r.zero { color: var(--text-3); font-weight: 400; }
     <div class="logo-mark">TM</div>
     <span class="header-title">Truemate</span>
     <span class="sep">|</span>
-    <span class="workspace-tag">W-Carlos-G</span>
+
+    <!-- Workspace Switcher -->
+    <div class="ws-switcher" id="wsSwitcher">
+      <div class="workspace-tag" id="wsTag" onclick="toggleWS()">
+        <span id="wsCurrentName">W-Carlos-G</span>
+        <span class="ws-chevron">▼</span>
+      </div>
+      <div class="ws-dropdown" id="wsDropdown">
+        <div class="ws-dropdown-header">Workspaces</div>
+
+        <!-- Carlos G — ACTIVE -->
+        <div class="ws-item active" onclick="switchWS('carlos')">
+          <div class="ws-item-left">
+            <div class="ws-avatar blue">CG</div>
+            <div class="ws-item-info">
+              <div class="ws-item-name">W-Carlos-G</div>
+              <div class="ws-item-sub">5 campañas activas</div>
+            </div>
+          </div>
+          <div class="ws-item-stats">
+            <div class="ws-stat-val">13,113</div>
+            <div class="ws-stat-label">Enviados</div>
+          </div>
+        </div>
+
+        <!-- Fleet -->
+        <div class="ws-item" onclick="switchWS('fleet')">
+          <div class="ws-item-left">
+            <div class="ws-avatar green">FT</div>
+            <div class="ws-item-info">
+              <div class="ws-item-name">W-Fleet</div>
+              <div class="ws-item-sub">fleet@truematecompany.com</div>
+            </div>
+          </div>
+          <div class="ws-item-stats">
+            <div class="ws-stat-val">—</div>
+            <div class="ws-stat-label">Enviados</div>
+          </div>
+        </div>
+
+        <!-- Coverage -->
+        <div class="ws-item" onclick="switchWS('coverage')">
+          <div class="ws-item-left">
+            <div class="ws-avatar purple">CV</div>
+            <div class="ws-item-info">
+              <div class="ws-item-name">W-Coverage</div>
+              <div class="ws-item-sub">coverage@truemateinsure.com</div>
+            </div>
+          </div>
+          <div class="ws-item-stats">
+            <div class="ws-stat-val">—</div>
+            <div class="ws-stat-label">Enviados</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
+
   <div class="header-right">
     <span class="last-run" id="lastRun"></span>
     <button class="btn-toggle" onclick="toggleTheme()">☀ / ☾</button>
@@ -423,31 +598,31 @@ td.r.zero { color: var(--text-3); font-weight: 400; }
 
   <!-- Page headline -->
   <div class="page-head">
-    <h1>Campaign Analytics</h1>
+    <h1 id="pageHeadline">Campaign Analytics · W-Carlos-G</h1>
     <span class="sub" id="todayDate"></span>
   </div>
 
   <!-- KPI tiles -->
-  <div class="kpi-row">
+  <div class="kpi-row" id="kpiRow">
     <div class="kpi">
       <div class="kpi-label">Total Enviados</div>
-      <div class="kpi-val blue">13,113</div>
+      <div class="kpi-val blue" id="kpiSent">13,113</div>
       <div class="kpi-sub">Across all campaigns</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Campañas Activas</div>
-      <div class="kpi-val green">2</div>
+      <div class="kpi-val green" id="kpiActive">2</div>
       <div class="kpi-sub">Running · 3 total</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Total Bounces</div>
-      <div class="kpi-val purple">14</div>
+      <div class="kpi-val purple" id="kpiBounces">14</div>
       <div class="kpi-sub">0.11% bounce rate</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Leads Progreso</div>
-      <div class="kpi-val neutral">721</div>
-      <div class="kpi-sub">of 2,847 en curso</div>
+      <div class="kpi-val neutral" id="kpiLeads">721</div>
+      <div class="kpi-sub" id="kpiLeadsSub">of 2,847 en curso</div>
     </div>
   </div>
 
@@ -469,7 +644,7 @@ td.r.zero { color: var(--text-3); font-weight: 400; }
   <div class="table-card">
     <div class="table-head-row">
       <h2>Campañas</h2>
-      <span class="count-badge">5 campañas</span>
+      <span class="count-badge" id="campCount">5 campañas</span>
     </div>
     <div class="tbl-wrap">
       <table>
@@ -486,7 +661,7 @@ td.r.zero { color: var(--text-3); font-weight: 400; }
             <th class="r">Bounces</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="campTable">
           <tr>
             <td>
               <div class="cam-name">Campaña Julio 2026-Truemate</div>
@@ -597,6 +772,7 @@ function toggleTheme() {
   const root = document.documentElement;
   const cur = root.getAttribute('data-theme');
   root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  drawChart();
 }
 
 /* ── Date display ── */
@@ -606,7 +782,83 @@ document.getElementById('todayDate').textContent =
 document.getElementById('lastRun').textContent =
   'Actualizado: ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
+/* ── Workspace Switcher ── */
+const wsData = {
+  carlos: {
+    label: 'W-Carlos-G',
+    campaigns: [
+      { name: 'Campaña Julio 2026',       sent: 7092, bounces: 11, shortName: 'Jul 2026 (A)' },
+      { name: '2 Campaña Julio 2026',     sent: 5300, bounces: 2,  shortName: 'Jul 2026 (B)' },
+      { name: 'Regular Sep (16-30 días)', sent: 565,  bounces: 1,  shortName: 'Regular Sep'  },
+      { name: 'Renovación 2-3 semanas',   sent: 156,  bounces: 0,  shortName: 'Renovación'   },
+      { name: 'Sep 2026-Truemate',        sent: 0,    bounces: 0,  shortName: 'Sep 2026'     },
+    ]
+  },
+  fleet: {
+    label: 'W-Fleet',
+    campaigns: []
+  },
+  coverage: {
+    label: 'W-Coverage',
+    campaigns: []
+  }
+};
+
+let currentWS = 'carlos';
+
+function toggleWS() {
+  const sw = document.getElementById('wsSwitcher');
+  sw.classList.toggle('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const sw = document.getElementById('wsSwitcher');
+  if (!sw.contains(e.target)) sw.classList.remove('open');
+});
+
+function switchWS(ws) {
+  currentWS = ws;
+  const data = wsData[ws];
+  document.getElementById('wsCurrentName').textContent = data.label;
+  document.getElementById('pageHeadline').textContent = 'Campaign Analytics · ' + data.label;
+  document.getElementById('wsSwitcher').classList.remove('open');
+
+  // Mark active item
+  document.querySelectorAll('.ws-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  // Update KPIs and chart
+  if (ws === 'carlos') {
+    document.getElementById('kpiSent').textContent = '13,113';
+    document.getElementById('kpiActive').textContent = '2';
+    document.getElementById('kpiBounces').textContent = '14';
+    document.getElementById('kpiLeads').textContent = '721';
+    document.getElementById('kpiLeadsSub').textContent = 'of 2,847 en curso';
+    document.getElementById('campCount').textContent = '5 campañas';
+    document.getElementById('campTable').style.display = '';
+    document.getElementById('campTable').parentElement.parentElement.querySelector('.table-head-row').style.display = '';
+  } else {
+    // Fleet / Coverage — no data yet
+    document.getElementById('kpiSent').textContent = '—';
+    document.getElementById('kpiActive').textContent = '—';
+    document.getElementById('kpiBounces').textContent = '—';
+    document.getElementById('kpiLeads').textContent = '—';
+    document.getElementById('kpiLeadsSub').textContent = 'sin datos aún';
+    document.getElementById('campCount').textContent = '0 campañas';
+  }
+
+  drawChart();
+}
+
 /* ── Horizontal bar chart ── */
+function isDark() {
+  const forced = document.documentElement.getAttribute('data-theme');
+  if (forced === 'dark') return true;
+  if (forced === 'light') return false;
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
 function drawChart() {
   const svg = document.getElementById('barChart');
   const W = 900, H = 240;
@@ -614,60 +866,91 @@ function drawChart() {
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
-  const campaigns = [
-    { name: 'Campaña Julio 2026',       sent: 7092, bounces: 11, shortName: 'Jul 2026 (A)' },
-    { name: '2 Campaña Julio 2026',     sent: 5300, bounces: 2,  shortName: 'Jul 2026 (B)' },
-    { name: 'Regular Sep (16-30 días)', sent: 565,  bounces: 1,  shortName: 'Regular Sep'  },
-    { name: 'Renovación 2-3 semanas',   sent: 156,  bounces: 0,  shortName: 'Renovación'   },
-    { name: 'Sep 2026-Truemate',        sent: 0,    bounces: 0,  shortName: 'Sep 2026'     },
-  ];
+  const dark = isDark();
+  const colText3  = dark ? '#4A5070' : '#9AA0C0';
+  const colBorder = dark ? '#1E2A45' : '#E2E8FF';
+  const colAccent = dark ? '#6B8FFF' : '#4C6EF5';
+  const colBounce = '#7C3AED';
+  const colText2  = dark ? '#8B92B8' : '#5A6296';
+  const colEmpty  = dark ? '#1E2A45' : '#E2E8FF';
 
-  const maxVal = 7092;
+  const campaigns = wsData[currentWS].campaigns;
+
+  if (campaigns.length === 0) {
+    svg.innerHTML = `<text x="450" y="120" text-anchor="middle"
+      font-family="Inter,sans-serif" font-size="13" fill="${colText3}">
+      Sin datos para este workspace
+    </text>`;
+    return;
+  }
+
+  const maxVal = Math.max(...campaigns.map(c => c.sent), 1);
   const barH = Math.floor(chartH / campaigns.length);
   const barPad = Math.round(barH * .22);
   const effectiveBarH = barH - barPad * 2;
 
-  const cs = getComputedStyle(document.documentElement);
-  const colText3  = cs.getPropertyValue('--text-3').trim()  || '#9AA0C0';
-  const colBorder = cs.getPropertyValue('--border').trim()  || '#E2E8FF';
-  const colAccent = cs.getPropertyValue('--accent').trim()  || '#4C6EF5';
-  const colBounce = '#7C3AED';
-  const colText2  = cs.getPropertyValue('--text-2').trim()  || '#5A6296';
-
   let html = '';
 
+  // Grid lines
   const gridSteps = [0, 0.25, 0.5, 0.75, 1];
   gridSteps.forEach(t => {
     const x = padL + chartW * t;
     const label = t === 0 ? '0' : Math.round(maxVal * t).toLocaleString();
-    html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + chartH}" stroke="${colBorder}" stroke-width="1" stroke-dasharray="${t === 0 ? 'none' : '3,3'}"/>";
-    html += `<text x="${x}" y="${padT + chartH + 14}" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="${colText3}">${label}</text>`;
+    html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + chartH}"
+               stroke="${colBorder}" stroke-width="1" stroke-dasharray="${t === 0 ? 'none' : '3,3'}"/>`;
+    html += `<text x="${x}" y="${padT + chartH + 14}" text-anchor="middle"
+               font-family="Inter,sans-serif" font-size="9" fill="${colText3}">${label}</text>`;
   });
 
+  // Bars
   campaigns.forEach((c, i) => {
     const y = padT + i * barH + barPad;
-    const sentW = Math.max(c.sent / maxVal * chartW, 0);
+    const sentW   = Math.max(c.sent    / maxVal * chartW, 0);
     const bounceW = Math.max(c.bounces / maxVal * chartW, 0);
     const rx = Math.min(4, effectiveBarH / 2);
+
+    // Background track
+    html += `<rect x="${padL}" y="${y}" width="${chartW}" height="${effectiveBarH}"
+               rx="${rx}" fill="${colEmpty}" opacity="0.5"/>`;
+
+    // Sent bar
     if (sentW > 0) {
-      html += `<rect x="${padL}" y="${y}" width="${sentW}" height="${effectiveBarH}" rx="${rx}" fill="${colAccent}" opacity=".85"/>";
-    } else {
-      html += `<rect x="${padL}" y="${y}" width="2" height="${effectiveBarH}" rx="1" fill="${colBorder}"/>";
+      html += `<rect x="${padL}" y="${y}" width="${sentW}" height="${effectiveBarH}"
+                 rx="${rx}" fill="${colAccent}" opacity=".85"/>`;
     }
+
+    // Bounce overlay
     if (bounceW > 0) {
-      html += `<rect x="${padL}" y="${y + effectiveBarH * .3}" width="${Math.max(bounceW, 3)}" height="${effectiveBarH * .4}" rx="2" fill="${colBounce}" opacity=".9"/>";
+      html += `<rect x="${padL}" y="${y + effectiveBarH * .3}"
+                 width="${Math.max(bounceW, 4)}" height="${effectiveBarH * .4}"
+                 rx="2" fill="${colBounce}" opacity=".9"/>`;
     }
+
+    // Sent value label (to the right of bar)
+    const labelX = padL + Math.max(sentW, 4) + 8;
     if (c.sent > 0) {
-      html += `<text x="${padL + sentW + 8}" y="${y + effectiveBarH / 2 + 4}" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="${colAccent}">${c.sent.toLocaleString()}</text>`;
+      html += `<text x="${labelX}" y="${y + effectiveBarH / 2 + 4}"
+                 font-family="Outfit,sans-serif" font-size="12" font-weight="700"
+                 fill="${colAccent}">${c.sent.toLocaleString()}</text>`;
+    } else {
+      html += `<text x="${padL + 8}" y="${y + effectiveBarH / 2 + 4}"
+                 font-family="Inter,sans-serif" font-size="10" fill="${colText3}">sin envíos</text>`;
     }
-    html += `<text x="${W - padR + 10}" y="${y + effectiveBarH / 2 + 4}" font-family="Inter,sans-serif" font-size="10.5" font-weight="500" fill="${colText2}">${c.shortName}</text>`;
+
+    // Campaign name (right side)
+    html += `<text x="${W - padR + 10}" y="${y + effectiveBarH / 2 + 4}"
+               font-family="Inter,sans-serif" font-size="10.5" font-weight="500"
+               fill="${colText2}">${c.shortName}</text>`;
   });
 
   svg.innerHTML = html;
 }
 
-drawChart();
-const observer = new MutationObserver(drawChart);
-observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawChart);
+// Initial draw — delayed slightly to ensure layout is ready in iFrame
+setTimeout(drawChart, 100);
+
+// Redraw on system theme change
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawChart);
+}
 </script>
