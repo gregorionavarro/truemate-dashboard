@@ -1,10 +1,10 @@
 {
-  "lastUpdated": "24 Aug 2026 · 08:00",
+  "lastUpdated": "24 Aug 2026 · 12:00",
   "workspace": "W-Carlos-G",
-  "totalSent": 721,
+  "totalSent": 1421,
   "totalBounces": 1,
   "activeCampaigns": 2,
-  "leadsInProgress": 721,
+  "leadsInProgress": 1421,
   "totalLeads": 2847,
   "campaigns": [
     {
@@ -12,12 +12,12 @@
       "shortName": "Regular Sep",
       "createdLabel": "Creada 21 Aug · en curso",
       "status": "Running",
-      "sent": 565,
+      "sent": 1122,
       "opens": 0,
       "clicks": 0,
       "replies": 3,
       "bounces": 1,
-      "leadsActive": 565,
+      "leadsActive": 1122,
       "leadsTotal": 1752
     },
     {
@@ -25,12 +25,12 @@
       "shortName": "Renovación",
       "createdLabel": "Creada 22 Aug · en curso",
       "status": "Running",
-      "sent": 156,
+      "sent": 299,
       "opens": 0,
       "clicks": 0,
       "replies": 0,
       "bounces": 0,
-      "leadsActive": 156,
+      "leadsActive": 299,
       "leadsTotal": 1095
     }
   ]
