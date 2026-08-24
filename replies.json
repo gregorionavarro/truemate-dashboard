@@ -1,4 +1,13 @@
 {
   "lastUpdated": "2026-08-24",
-  "replies": []
+  "replies": [
+    {
+      "campaignName": "Test Campaign",
+      "firstName": "Juan",
+      "lastName": "Prueba",
+      "email": "test@ejemplo.com",
+      "replyContent": "Hola, estoy interesado en el servicio.",
+      "replyDate": "2026-08-23T23:00:59.303-04:00"
+    }
+  ]
 }
