@@ -1,38 +1,12 @@
 {
-  "lastUpdated": "2026-08-23",
+  "lastUpdated": "24 Aug 2026 · 08:00",
   "workspace": "W-Carlos-G",
-  "totalSent": 13113,
-  "totalBounces": 14,
+  "totalSent": 721,
+  "totalBounces": 1,
   "activeCampaigns": 2,
   "leadsInProgress": 721,
   "totalLeads": 2847,
   "campaigns": [
-    {
-      "name": "Campaña Julio 2026-Truemate",
-      "shortName": "Jul 2026 (A)",
-      "createdLabel": "Creada Jul 2026",
-      "status": "Running",
-      "sent": 7092,
-      "opens": 0,
-      "clicks": 0,
-      "replies": 0,
-      "bounces": 11,
-      "leadsActive": 7092,
-      "leadsTotal": 7092
-    },
-    {
-      "name": "2 Campaña Julio 2026-Truemate",
-      "shortName": "Jul 2026 (B)",
-      "createdLabel": "Creada Jul 2026",
-      "status": "Running",
-      "sent": 5300,
-      "opens": 0,
-      "clicks": 0,
-      "replies": 0,
-      "bounces": 2,
-      "leadsActive": 5300,
-      "leadsTotal": 7092
-    },
     {
       "name": "Campaña Regular Sep 2026 (16-30 días)",
       "shortName": "Regular Sep",
@@ -58,19 +32,6 @@
       "bounces": 0,
       "leadsActive": 156,
       "leadsTotal": 1095
-    },
-    {
-      "name": "Campaña Sep 2026-Truemate",
-      "shortName": "Sep 2026",
-      "createdLabel": "Creada 22 Aug · iniciando",
-      "status": "Running",
-      "sent": 0,
-      "opens": 0,
-      "clicks": 0,
-      "replies": 0,
-      "bounces": 0,
-      "leadsActive": 0,
-      "leadsTotal": 0
     }
   ]
 }
