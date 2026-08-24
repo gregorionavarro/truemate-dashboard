@@ -3,6 +3,14 @@
   "replies": [
     {
       "campaignName": "Campaña Regular Sep 2026 (16-30 días)",
+      "firstName": "PRUEBA",
+      "lastName": "TRUCKING",
+      "email": "prueba.trucking@test.com",
+      "replyContent": "Hola, me interesa el seguro de camiones.",
+      "replyDate": "2026-08-24T07:50:21.740-04:00"
+    },
+    {
+      "campaignName": "Campaña Regular Sep 2026 (16-30 días)",
       "firstName": "GREGORIO",
       "lastName": "NAVARRO",
       "email": "gregorionavarrosanabria@gmail.com",
