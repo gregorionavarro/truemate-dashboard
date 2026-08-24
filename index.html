@@ -1124,6 +1124,27 @@ async function loadReplies() {
         if (count > 0) c.replies = count;
       });
     });
+    // Re-render RESPUESTAS column so counts show without full reload
+    const tbody = document.getElementById('campTable');
+    if (tbody) {
+      tbody.querySelectorAll('tr').forEach(row => {
+        const nameEl = row.querySelector('.cam-name');
+        if (!nameEl) return;
+        const cn = nameEl.textContent.trim();
+        const cnt = allReplies.filter(r => r.campaignName === cn).length;
+        const cells = row.querySelectorAll('td');
+        const cell = cells[7];
+        if (!cell) return;
+        cell.textContent = cnt;
+        if (cnt > 0) {
+          cell.className = 'r replies-link';
+          cell.onclick = () => showReplies(cn);
+        } else {
+          cell.className = 'r zero';
+          cell.onclick = null;
+        }
+      });
+    }
   } catch(e) { /* silent */ }
 }
 
