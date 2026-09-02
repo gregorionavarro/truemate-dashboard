@@ -7,6 +7,14 @@
       "lastName": "Prospect",
       "email": "sample.prospect@mystrika.com",
       "replyContent": "This is Sample Email Body",
+      "replyDate": "2026-09-01T22:49:06.583-04:00"
+    },
+    {
+      "campaignName": "Test Campaign",
+      "firstName": "Sample",
+      "lastName": "Prospect",
+      "email": "sample.prospect@mystrika.com",
+      "replyContent": "This is Sample Email Body",
       "replyDate": "2026-09-01T22:45:18.436-04:00"
     },
     {
