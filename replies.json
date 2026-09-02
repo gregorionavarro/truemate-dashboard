@@ -1,6 +1,14 @@
 {
-  "lastUpdated": "2026-08-29",
+  "lastUpdated": "2026-09-02",
   "replies": [
+    {
+      "campaignName": "Test Campaign",
+      "firstName": "Sample",
+      "lastName": "Prospect",
+      "email": "sample.prospect@mystrika.com",
+      "replyContent": "This is Sample Email Body",
+      "replyDate": "2026-09-01T22:32:24.360-04:00"
+    },
     {
       "campaignName": "Campaña Sep/26-Truemate",
       "firstName": "caris",
