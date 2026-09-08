@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "overall_score": {
+    "range": [0, 100],
+    "healthy": [90, 100],
+    "monitor": [80, 89],
+    "degraded": [65, 79],
+    "critical": [0, 64]
+  },
+  "dimensions": {
+    "pronunciation": {"weight": 0.10, "requires_audio": true},
+    "naturalness": {"weight": 0.10, "requires_audio": true},
+    "listening_comprehension": {"weight": 0.15, "requires_audio": false},
+    "turn_taking": {"weight": 0.15, "requires_audio": true},
+    "repetition_loops": {"weight": 0.10, "requires_audio": false},
+    "response_accuracy": {"weight": 0.15, "requires_audio": false},
+    "flow_adherence": {"weight": 0.10, "requires_audio": false},
+    "question_handling": {"weight": 0.10, "requires_audio": false},
+    "closing_quality": {"weight": 0.05, "requires_audio": false}
+  },
+  "critical_behaviors": [
+    "fabricated_or_materially_wrong_information",
+    "repeated_loop_that_blocks_conversation",
+    "agent_ignores_clear_stop_or_no_request",
+    "agent_becomes_unintelligible",
+    "severe_turn_taking_failure",
+    "conversation_breakdown_without_recovery"
+  ],
+  "audio_evidence_rule": "Do not assert pronunciation, prosody, overlap, silence, pace, or voice-naturalness failures from transcript alone.",
+  "finding_severities": ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
+}
