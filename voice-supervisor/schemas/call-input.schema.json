@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://truemate.example/schemas/voice-supervisor-call-input.schema.json",
+  "title": "TrueMate Voice Supervisor Call Input",
+  "type": "object",
+  "required": ["call_id", "agent_id", "started_at", "duration_seconds", "transcript"],
+  "properties": {
+    "call_id": {"type": "string", "minLength": 1},
+    "agent_id": {"type": "string", "minLength": 1},
+    "agent_name": {"type": ["string", "null"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "duration_seconds": {"type": "number", "minimum": 0},
+    "transcript": {"type": "string"},
+    "recording_url": {"type": ["string", "null"]},
+    "disconnection_reason": {"type": ["string", "null"]},
+    "direction": {"type": ["string", "null"], "enum": ["inbound", "outbound", null]},
+    "language": {"type": ["string", "null"]},
+    "retell_metadata": {"type": ["object", "null"], "additionalProperties": true}
+  },
+  "additionalProperties": true
+}
