@@ -1,0 +1,112 @@
+{
+  "name": "TrueMate AI Voice Supervisor V1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "truemate-retell-supervisor-v1",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "retell-webhook",
+      "name": "Retell Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-900, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const src = $json.call || $json.data || $json;\nconst transcript = src.transcript || src.transcript_text || src.transcript_with_tool_calls || '';\nconst durationMs = src.duration_ms || ((src.end_timestamp && src.start_timestamp) ? Number(src.end_timestamp) - Number(src.start_timestamp) : null);\nreturn [{json:{call_id:src.call_id || src.id || null,agent_id:src.agent_id || null,agent_name:src.agent_name || 'Retell Agent',transcript,recording_url:src.recording_url || src.recording_multi_channel_url || null,start_timestamp:src.start_timestamp || null,end_timestamp:src.end_timestamp || null,duration_ms:durationMs,disconnection_reason:src.disconnection_reason || null,raw_event_type:$json.event || $json.event_type || null}}];"
+      },
+      "id": "normalize",
+      "name": "Normalize Retell Call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-650, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true,"leftValue": "","typeValidation": "strict","version": 2},
+          "conditions": [
+            {"id": "has-transcript","leftValue": "={{ $json.transcript }}","rightValue": "","operator": {"type": "string","operation": "notEmpty","singleValue": true}}
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-conversation",
+      "name": "Has Conversation?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const c=$json;\nconst instructions=`You are the independent TrueMate Voice Agent Supervisor. Audit ONLY the quality of the AI agent conversation, not GHL, CRM routing, or n8n automation. Review understanding, answer accuracy, listening, repetition, flow, naturalness, objection handling, closing, and safety/compliance. Never claim pronunciation, tone, overlap/interruption, silence, or voice quality is confirmed from transcript alone; instead set audio_review_needed=true. Status rules: HEALTHY 90-100, MONITOR 80-89, WARNING 65-79, CRITICAL below 65 or any critical failure. Critical failures include materially wrong/fabricated information, ignoring a clear stop/refusal, loops, misleading contradictions, or failing to answer a direct question in a materially harmful way. Findings require concrete evidence and confidence 0-100.`;\nconst input=`CALL ID: ${c.call_id || ''}\\nAGENT: ${c.agent_name || c.agent_id || ''}\\nDURATION_MS: ${c.duration_ms ?? ''}\\nDISCONNECTION: ${c.disconnection_reason || ''}\\nRECORDING_AVAILABLE: ${Boolean(c.recording_url)}\\n\\nTRANSCRIPT:\\n${c.transcript}`;\nreturn [{json:{...c,openai_body:{model:'gpt-5.5',store:false,instructions,input,text:{format:{type:'json_schema',name:'truemate_voice_qa',strict:true,schema:{type:'object',additionalProperties:false,properties:{overall_score:{type:'integer',minimum:0,maximum:100},status:{type:'string',enum:['HEALTHY','MONITOR','WARNING','CRITICAL']},critical:{type:'boolean'},audio_review_needed:{type:'boolean'},scores:{type:'object',additionalProperties:false,properties:{understanding:{type:'integer',minimum:0,maximum:100},answer_accuracy:{type:'integer',minimum:0,maximum:100},listening:{type:'integer',minimum:0,maximum:100},repetition:{type:'integer',minimum:0,maximum:100},flow:{type:'integer',minimum:0,maximum:100},naturalness:{type:'integer',minimum:0,maximum:100},objection_handling:{type:'integer',minimum:0,maximum:100},closing:{type:'integer',minimum:0,maximum:100},safety_and_compliance:{type:'integer',minimum:0,maximum:100}},required:['understanding','answer_accuracy','listening','repetition','flow','naturalness','objection_handling','closing','safety_and_compliance']},findings:{type:'array',items:{type:'object',additionalProperties:false,properties:{category:{type:'string'},severity:{type:'string',enum:['LOW','MEDIUM','HIGH','CRITICAL']},timestamp:{type:['string','null']},evidence:{type:'string'},explanation:{type:'string'},recommended_action:{type:'string'},confidence:{type:'integer',minimum:0,maximum:100}},required:['category','severity','timestamp','evidence','explanation','recommended_action','confidence']}},summary:{type:'string'}},required:['overall_score','status','critical','audio_review_needed','scores','findings','summary']}}},max_output_tokens:1800}}}];"
+      },
+      "id": "build-request",
+      "name": "Build Supervisor Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-150, -120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "sendHeaders": true,
+        "headerParameters": {"parameters": [{"name": "Authorization","value": "=Bearer {{ $env.OPENAI_API_KEY }}"},{"name": "Content-Type","value": "application/json"}]},
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.openai_body) }}",
+        "options": {}
+      },
+      "id": "openai-qa",
+      "name": "OpenAI Supervisor QA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [100, -120]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r=$json;\nlet text=r.output_text;\nif(!text && Array.isArray(r.output)){for(const item of r.output){if(Array.isArray(item.content)){const t=item.content.find(x=>x.type==='output_text'&&x.text);if(t){text=t.text;break;}}}}\nif(!text) throw new Error('OpenAI response did not contain output_text');\nconst qa=typeof text==='string'?JSON.parse(text):text;\nreturn [{json:{audited_at:new Date().toISOString(),qa,openai_response_id:r.id || null}}];"
+      },
+      "id": "parse-result",
+      "name": "Parse QA Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [350, -120]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true,"leftValue": "","typeValidation": "strict","version": 2},
+          "conditions": [
+            {"id":"critical","leftValue":"={{ $json.qa.critical }}","rightValue":true,"operator":{"type":"boolean","operation":"true","singleValue":true}}
+          ],
+          "combinator":"or"
+        },
+        "options":{}
+      },
+      "id":"critical-check",
+      "name":"Critical Issue?",
+      "type":"n8n-nodes-base.if",
+      "typeVersion":2.2,
+      "position":[600,-120]
+    }
+  ],
+  "connections": {
+    "Retell Webhook": {"main":[[{"node":"Normalize Retell Call","type":"main","index":0}]]},
+    "Normalize Retell Call": {"main":[[{"node":"Has Conversation?","type":"main","index":0}]]},
+    "Has Conversation?": {"main":[[{"node":"Build Supervisor Request","type":"main","index":0}],[]]},
+    "Build Supervisor Request": {"main":[[{"node":"OpenAI Supervisor QA","type":"main","index":0}]]},
+    "OpenAI Supervisor QA": {"main":[[{"node":"Parse QA Result","type":"main","index":0}]]},
+    "Parse QA Result": {"main":[[{"node":"Critical Issue?","type":"main","index":0}]]}
+  },
+  "pinData": {},
+  "settings": {"executionOrder":"v1"},
+  "active": false,
+  "versionId": "truemate-voice-supervisor-v1"
+}
