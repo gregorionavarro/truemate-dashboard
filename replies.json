@@ -4,6 +4,14 @@
     {
       "campaignName": "PRUEBA - Campaña 12 de octubre",
       "firstName": "PRUEBA",
+      "lastName": "Owner",
+      "email": "prueba-owner-20261014@example.com",
+      "replyContent": "PRUEBA de asignacion a Gregorio Navarro. No llamar.",
+      "replyDate": "2026-10-14T00:41:53.122-04:00"
+    },
+    {
+      "campaignName": "PRUEBA - Campaña 12 de octubre",
+      "firstName": "PRUEBA",
       "lastName": "TrueMate",
       "email": "prueba-mystrika-20261014@example.com",
       "replyContent": "PRUEBA TECNICA: verificar contacto, campos, oportunidad, GitHub y correo. No llamar.",
