@@ -1,6 +1,14 @@
 {
-  "lastUpdated": "2026-10-13",
+  "lastUpdated": "2026-10-14",
   "replies": [
+    {
+      "campaignName": "PRUEBA - Campaña 12 de octubre",
+      "firstName": "PRUEBA",
+      "lastName": "TrueMate",
+      "email": "prueba-mystrika-20261014@example.com",
+      "replyContent": "PRUEBA TECNICA: verificar contacto, campos, oportunidad, GitHub y correo. No llamar.",
+      "replyDate": "2026-10-14T00:29:24.453-04:00"
+    },
     {
       "campaignName": "Campaña 12 de octubre",
       "firstName": "Karahjo",
